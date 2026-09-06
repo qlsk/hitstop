@@ -12,14 +12,19 @@ public class PlayerHit : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            StartCoroutine(HitStop(0.2f));
+            StartCoroutine(HitStopCoroutine(0.2f));
         }
     }
 
-    IEnumerator HitStop(float time)
+    private IEnumerator HitStopCoroutine(float time)
     {
         Time.timeScale = 0f;
         yield return new WaitForSecondsRealtime(time);
         Time.timeScale = 1f;
+    }
+
+    public void HitStop(float time)
+    {
+        StartCoroutine(HitStopCoroutine(time));
     }
 }
