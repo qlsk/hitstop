@@ -491,6 +491,7 @@ GameObject:
   - component: {fileID: 1907380860}
   - component: {fileID: 1907380859}
   - component: {fileID: 1907380861}
+  - component: {fileID: 1907380862}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -651,6 +652,18 @@ MonoBehaviour:
   _moveSpeed: 5
   _jumpPower: 5
   _rigidbody: {fileID: 1907380859}
+--- !u!114 &1907380862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907380856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3ff867b72d13f548a3d8abd3f22bd06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHit
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
