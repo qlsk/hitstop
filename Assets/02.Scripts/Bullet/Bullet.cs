@@ -3,9 +3,9 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed;
+
     private void Start()
     {
-        
     }
 
     private void Update()
@@ -13,11 +13,11 @@ public class Bullet : MonoBehaviour
         transform.Translate(_moveSpeed * Time.deltaTime * Vector3.left);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        if (collision.gameObject.tag == "Player")
+        if (other.gameObject.CompareTag("Player"))
         {
-            PlayerHit playerHit = collision.gameObject.GetComponent<PlayerHit>();
+            PlayerHit playerHit = other.gameObject.GetComponent<PlayerHit>();
             playerHit.HitStop(0.3f);
             Destroy(gameObject);
         }
