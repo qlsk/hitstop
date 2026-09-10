@@ -6,11 +6,7 @@ public class PlayerHit : MonoBehaviour
 {
     public Toggle hitStopToggle;
     public Slider hitStopSlider;
-
-    private void Start()
-    {
-    }
-
+    
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
