@@ -1,18 +1,19 @@
 using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerMove : MonoBehaviour
 {
     [SerializeField][Header("캐릭터 이동 속도")] private float _moveSpeed;
-    [SerializeField][Header("점프력")] private float _jumpPower;
-    [SerializeField][Header("하강시 중력 값")] private float _downSpeed;
-    [SerializeField][Header("최대 점프 높이")] private float _maxJumpHeight;
-    [SerializeField][Header("초기 점프")] private float _startJumpPower;
+    [SerializeField][Header("지속 점프 세기")] private float _jumpHoldForce;
+    [SerializeField][Header("하강시 중력 값")] private float _fallGravityScale;
+    [SerializeField][Header("최대 점프 높이")] private float _maxJumpBoostHeight;
+    [SerializeField][Header("첫 점프 세기")] private float _jumpImpulse;
     private Rigidbody2D _rigidbody;
     private bool _isGrounded;
-    private bool _isJumping;
-    private float _jumpStartPositionY;
+    private bool _canContinueJump;
+    private float _jumpStartY;
 
     private void Start()
     {
@@ -37,25 +38,25 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.C) && _isGrounded)
         {
             // 시작 Y 위치 저장
-            _jumpStartPositionY = transform.position.y;
+            _jumpStartY = transform.position.y;
             // Impulse로 점프 시작
-            _rigidbody.AddForce(_startJumpPower * Vector2.up, ForceMode2D.Impulse);
+            _rigidbody.AddForce(_jumpImpulse * Vector2.up, ForceMode2D.Impulse);
             // 점프 중
-            _isJumping = true;
+            _canContinueJump = true;
         }
 
         // 점프키를 누르고 있을 때 + 점프 중일 때 + 현재 점프한 거리가 점프 최대 거리보다 낮을 때
-        if (Input.GetKey(KeyCode.C) && _isJumping && (transform.position.y - _jumpStartPositionY < _maxJumpHeight))
+        if (Input.GetKey(KeyCode.C) && _canContinueJump && (transform.position.y - _jumpStartY < _maxJumpBoostHeight))
         {
-            _rigidbody.AddForce(_jumpPower * Vector2.up, ForceMode2D.Force);
+            _rigidbody.AddForce(_jumpHoldForce * Vector2.up, ForceMode2D.Force);
         }
 
         // 플레이어가 떨어질 때 (수직 속도가 음수가 될 때)
         if (_rigidbody.linearVelocityY < 0f)
         {
-            _isJumping = false;
+            _canContinueJump = false;
             // 중력 증가
-            _rigidbody.gravityScale = _downSpeed;
+            _rigidbody.gravityScale = _fallGravityScale;
         }
 
         // 점프 키를 땠을 때
