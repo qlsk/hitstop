@@ -1677,10 +1677,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
   _moveSpeed: 5
-  _jumpPower: 5
-  _downSpeed: 2
-  _maxJumpHeight: 1
-  _startJumpPower: 3
+  _jumpPower: 3
+  _downSpeed: 3
+  _maxJumpHeight: 0.5
+  _startJumpPower: 5
 --- !u!114 &1907380862
 MonoBehaviour:
   m_ObjectHideFlags: 0

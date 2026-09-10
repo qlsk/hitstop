@@ -4,22 +4,19 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    [SerializeField] [Header("캐릭터 이동 속도")] private float _moveSpeed;
-    [SerializeField] [Header("점프력")] private float _jumpPower;
-    [SerializeField] [Header("하강시 중력 값")] private float _downSpeed;
-    [SerializeField] [Header("최대 점프 높이")] private float _maxJumpHeight;
-    [SerializeField] [Header("초기 점프")] private float _startJumpPower;
+    [SerializeField][Header("캐릭터 이동 속도")] private float _moveSpeed;
+    [SerializeField][Header("점프력")] private float _jumpPower;
+    [SerializeField][Header("하강시 중력 값")] private float _downSpeed;
+    [SerializeField][Header("최대 점프 높이")] private float _maxJumpHeight;
+    [SerializeField][Header("초기 점프")] private float _startJumpPower;
     private Rigidbody2D _rigidbody;
     private bool _isGrounded;
     private bool _isJumping;
-    private bool _isJumpStart = false;
-    private float _jumpTimer;
     private float _jumpStartPositionY;
-    private float _tempJumpPower;
+
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
-        _tempJumpPower = _jumpPower;
     }
 
     private void Update()
@@ -37,38 +34,39 @@ public class PlayerMove : MonoBehaviour
         }
 
         // 점프
-        if (Input.GetKey(KeyCode.Space) && transform.position.y - _jumpStartPositionY < _maxJumpHeight)
+        if (Input.GetKeyDown(KeyCode.C) && _isGrounded)
         {
-            // 점프 처음 시작할 때
-            if (!_isJumpStart)
-            {
-                _jumpStartPositionY = transform.position.y;
-                // _rigidbody.AddForce(_startJumpPower * Time.deltaTime * Vector2.up, ForceMode2D.Impulse);
-                _isJumpStart = true;
-            }
-            Jump();
+            // 시작 Y 위치 저장
+            _jumpStartPositionY = transform.position.y;
+            // Impulse로 점프 시작
+            _rigidbody.AddForce(_startJumpPower * Vector2.up, ForceMode2D.Impulse);
+            // 점프 중
+            _isJumping = true;
         }
 
-        // 점프 중일 때
-        if (_isJumping)
+        // 점프키를 누르고 있을 때 + 점프 중일 때 + 현재 점프한 거리가 점프 최대 거리보다 낮을 때
+        if (Input.GetKey(KeyCode.C) && _isJumping && (transform.position.y - _jumpStartPositionY < _maxJumpHeight))
         {
-            // 점프 타이머 증가
-            // _jumpTimer += Time.deltaTime;
-            // 점프 파워 줄어 듦
-            // _jumpPower = Mathf.Lerp(_jumpPower, 0, Time.deltaTime);
-            // 플레이어가 떨어질 때 (수직 속도가 음수가 될 때)
-            if (_rigidbody.linearVelocityY < 3f)
+            _rigidbody.AddForce(_jumpPower * Vector2.up, ForceMode2D.Force);
+        }
+
+        // 플레이어가 떨어질 때 (수직 속도가 음수가 될 때)
+        if (_rigidbody.linearVelocityY < 0f)
+        {
+            _isJumping = false;
+            // 중력 증가
+            _rigidbody.gravityScale = _downSpeed;
+        }
+
+        // 점프 키를 땠을 때
+        if (Input.GetKeyUp(KeyCode.C))
+        {
+            if (_rigidbody.linearVelocityY > 0f)
             {
-                _isJumping = false;
-                _rigidbody.gravityScale = _downSpeed;
+                // 올라가던 속도 감소
+                _rigidbody.linearVelocity *= 0.2f;
             }
         }
-    }
-
-    private void Jump()
-    {
-        _rigidbody.AddForce(_jumpPower * Vector2.up, ForceMode2D.Force);
-        _isJumping = true;
     }
 
     // 땅과 접촉했을 때
@@ -76,14 +74,12 @@ public class PlayerMove : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Ground"))
         {
-            _isJumpStart = false;
-            _isGrounded = true;
-            _jumpPower = _tempJumpPower; // 점프력 정상화
+            _isGrounded = true; // 땅과 접촉 상태
             _rigidbody.gravityScale = 1f; // 중력 정상화
-            // _jumpTimer = 0; // 점프 타이머 초기화
         }
     }
 
+    // 땅에서 떨어졌을 때
     private void OnCollisionExit2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Ground"))
